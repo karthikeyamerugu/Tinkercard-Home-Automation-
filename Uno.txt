@@ -1,0 +1,46 @@
+#include <Servo.h>
+
+Servo doorServo;
+
+// Pin connections
+const int ldrPin = A0;
+const int pirPin = 7;
+const int ledPin = 8;
+const int servoPin = 9;
+
+void setup() {
+  pinMode(pirPin, INPUT);
+  pinMode(ledPin, OUTPUT);
+
+  doorServo.attach(servoPin);
+  doorServo.write(0);   // Door closed
+
+  Serial.begin(9600);
+}
+
+void loop() {
+
+  int lightValue = analogRead(ldrPin);
+  int motion = digitalRead(pirPin);
+
+  // Display sensor values
+  Serial.print("Light: ");
+  Serial.print(lightValue);
+  Serial.print("  Motion: ");
+  Serial.println(motion);
+
+  // If it is dark OR motion is detected
+  if (lightValue < 500 || motion == HIGH) {
+
+    digitalWrite(ledPin, HIGH);  // Light ON
+    doorServo.write(90);         // Door OPEN
+
+  } 
+  else {
+
+    digitalWrite(ledPin, LOW);   // Light OFF
+    doorServo.write(0);          // Door CLOSED
+  }
+
+  delay(500);
+}
